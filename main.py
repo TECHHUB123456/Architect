@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-replicate.Client(api_token=os.getenv("r8_2Y36HDAa2pyqbvoTHtVx6DoLu316uVR2YxvvC"))
+replicate_client = replicate.Client(api_token=os.getenv("REPLICATE_API_TOKEN"))
 
 @app.post("/transform")
 async def transform_image(
