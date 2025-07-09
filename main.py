@@ -1,8 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+import os
 import replicate
 import io
-import os
+
 
 app = FastAPI()
 
