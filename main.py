@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import replicate
 import io
+import os
 
 app = FastAPI()
 
@@ -14,8 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Set Replicate API token
-replicate_client = replicate.Client(api_token="r8_2Y36HDAa2pyqbvoTHtVx6DoLu316uVR2YxvvC")
+replicate.Client(api_token=os.getenv("r8_2Y36HDAa2pyqbvoTHtVx6DoLu316uVR2YxvvC"))
 
 @app.post("/transform")
 async def transform_image(
