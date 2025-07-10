@@ -1,38 +1,27 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import replicate
-import io
-
 
 app = FastAPI()
 
-# Enable frontend access (for Android, Web, etc.)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-replicate_client = replicate.Client(api_token="r8_2Y36HDAa2pyqbvoTHtVx6DoLu316uVR2YxvvC")
-
+replicate_client = replicate.Client(api_token="r8_3yW7As146lHaVTgGWNR6IdETxeQZFEA2Cb8Gb")
 
 @app.post("/transform")
-async def transform_image(
-    file: UploadFile = File(...),
-    prompt: str = Form("make it modern and furnished")
-):
+async def transform_image(prompt: str = Form(...), file: UploadFile = File(...)):
+    image_bytes = await file.read()
     try:
-        image_bytes = await file.read()
-        image_io = io.BytesIO(image_bytes)
-
         output = replicate_client.run(
-            "timothybrooks/instruct-pix2pix:6e00c697c5c011ed8f3c1edb3b78b1d2",
-            input={"image": image_io, "prompt": prompt}
+            "timbrooks/instruct-pix2pix:4e15f8c29d292d49b9bd06c6800c9529706eaf490396efcf6c0d371c33b95e04",
+            input={"image": image_bytes, "prompt": prompt}
         )
-
         return {"output_url": output}
-
-    except Exception as e:
-        return {"error": str(e)}
+    except replicate.exceptions.ReplicateError as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
